@@ -1,4 +1,4 @@
-package io.github.deniskonev.usermanagementapi;
+package io.github.deniskonev;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
