@@ -20,5 +20,5 @@ CREATE TABLE contacts (
 CREATE TABLE user_photos (
                              id SERIAL PRIMARY KEY,
                              user_id INTEGER NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
-                             photo BYTEA
+                             photo OID
 );

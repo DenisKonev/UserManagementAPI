@@ -9,14 +9,16 @@ import lombok.Data;
 @Data
 public class UserPhoto {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "user_id", unique = true)
+    @JoinColumn(name = "user_id", unique = true, nullable = false)
     @JsonBackReference
     private User user;
 
     @Lob
+    @Column(name = "photo")
     private byte[] photo;
 }
