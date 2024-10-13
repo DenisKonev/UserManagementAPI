@@ -1,6 +1,6 @@
 package io.github.deniskonev.service;
 
-import io.github.deniskonev.dto.UserUpdateDTO;
+import io.github.deniskonev.dto.UserDTO;
 import io.github.deniskonev.model.User;
 import io.github.deniskonev.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,18 +32,18 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public User updateUserPartially(User user, UserUpdateDTO userUpdateDTO) {
-        if (userUpdateDTO.getFirstName() != null) {
-            user.setFirstName(userUpdateDTO.getFirstName());
+    public User updateUserPartially(User user, UserDTO userDTO) {
+        if (userDTO.getFirstName() != null) {
+            user.setFirstName(userDTO.getFirstName());
         }
-        if (userUpdateDTO.getLastName() != null) {
-            user.setLastName(userUpdateDTO.getLastName());
+        if (userDTO.getLastName() != null) {
+            user.setLastName(userDTO.getLastName());
         }
-        if (userUpdateDTO.getMiddleName() != null) {
-            user.setMiddleName(userUpdateDTO.getMiddleName());
+        if (userDTO.getMiddleName() != null) {
+            user.setMiddleName(userDTO.getMiddleName());
         }
-        if (userUpdateDTO.getDateOfBirth() != null) {
-            LocalDate dateOfBirth = LocalDate.parse(userUpdateDTO.getDateOfBirth());
+        if (userDTO.getDateOfBirth() != null) {
+            LocalDate dateOfBirth = LocalDate.parse(userDTO.getDateOfBirth());
             user.setDateOfBirth(dateOfBirth);
         }
         return userRepository.save(user);

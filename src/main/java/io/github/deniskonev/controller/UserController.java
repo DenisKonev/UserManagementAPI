@@ -1,8 +1,9 @@
 package io.github.deniskonev.controller;
 
-import io.github.deniskonev.dto.UserUpdateDTO;
+import io.github.deniskonev.dto.UserDTO;
 import io.github.deniskonev.model.User;
 import io.github.deniskonev.service.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import static io.github.deniskonev.config.ApiConstants.USERS;
 
 @RestController
 @RequestMapping(BASE_API + USERS)
+@Tag(name = "User Controller", description = "CRUD операции для пользователей")
 public class UserController {
 
     @Autowired
@@ -58,11 +60,11 @@ public class UserController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<User> updateUserPartially(@PathVariable Long id, @Valid @RequestBody UserUpdateDTO userUpdateDTO) {
+    public ResponseEntity<User> updateUserPartially(@PathVariable Long id, @Valid @RequestBody UserDTO userDTO) {
         try {
             Optional<User> userOptional = userService.getUserById(id);
             if (userOptional.isPresent()) {
-                User updatedUser = userService.updateUserPartially(userOptional.get(), userUpdateDTO);
+                User updatedUser = userService.updateUserPartially(userOptional.get(), userDTO);
                 return ResponseEntity.ok(updatedUser);
             } else {
                 return ResponseEntity.notFound().build();

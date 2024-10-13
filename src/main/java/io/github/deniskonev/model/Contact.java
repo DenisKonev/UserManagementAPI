@@ -2,6 +2,9 @@ package io.github.deniskonev.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Entity
@@ -17,6 +20,13 @@ public class Contact {
     @JsonBackReference
     private User user;
 
+    @Column(nullable = false, unique = true)
+    @NotNull
+    @Email
     private String email;
+
+    @Column(nullable = false)
+    @NotNull
+    @Size(min = 5, max = 20)
     private String phoneNumber;
 }

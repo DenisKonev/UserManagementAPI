@@ -5,7 +5,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-public class UserUpdateDTO {
+public class UserDTO {
+
     @Size(max = 50)
     private String firstName;
 
