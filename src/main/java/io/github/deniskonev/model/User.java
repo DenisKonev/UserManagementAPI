@@ -1,13 +1,14 @@
 package io.github.deniskonev.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.Entity;
 import java.time.LocalDate;
 import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
-@Data
 @Table(name = "users")
+@Data
 public class User {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,13 +26,11 @@ public class User {
     @Column(name = "date_of_birth", nullable = false)
     private LocalDate dateOfBirth;
 
-    @Column(name = "email", nullable = false, unique = true)
-    private String email;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private Contact contact;
 
-    @Column(name = "phone_number", nullable = false)
-    private String phoneNumber;
-
-    @Lob
-    @Column(name = "photo")
-    private byte[] photo;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private UserPhoto userPhoto;
 }

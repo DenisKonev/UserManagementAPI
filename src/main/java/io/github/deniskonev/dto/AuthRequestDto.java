@@ -1,11 +1,9 @@
 package io.github.deniskonev.dto;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
-public class AuthRequest {
+public class AuthRequestDto {
     private String username;
     private String password;
 }

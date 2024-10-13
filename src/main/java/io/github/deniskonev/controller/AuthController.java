@@ -1,6 +1,6 @@
 package io.github.deniskonev.controller;
 
-import io.github.deniskonev.dto.AuthRequest;
+import io.github.deniskonev.dto.AuthRequestDto;
 import io.github.deniskonev.security.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.AuthenticationException;
@@ -18,9 +18,9 @@ public class AuthController {
     private JwtUtils jwtUtils;
 
     @PostMapping("/authenticate")
-    public Map<String, String> authenticate(@RequestBody AuthRequest authRequest) {
+    public Map<String, String> authenticate(@RequestBody AuthRequestDto authRequestDto) {
         try {
-            return Collections.singletonMap("token", jwtUtils.generateJwtToken(authRequest.getUsername()));
+            return Collections.singletonMap("token", jwtUtils.generateJwtToken(authRequestDto.getUsername()));
         } catch (AuthenticationException e) {
             throw new RuntimeException("Invalid credentials");
         }

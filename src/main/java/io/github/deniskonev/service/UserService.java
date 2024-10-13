@@ -1,10 +1,12 @@
 package io.github.deniskonev.service;
 
+import io.github.deniskonev.dto.UserUpdateDTO;
 import io.github.deniskonev.model.User;
 import io.github.deniskonev.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,11 +32,20 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public User getUserByEmail(String email) {
-        return userRepository.findByEmail(email);
-    }
-
-    public User getUserByPhoneNumber(String phoneNumber) {
-        return userRepository.findByPhoneNumber(phoneNumber);
+    public User updateUserPartially(User user, UserUpdateDTO userUpdateDTO) {
+        if (userUpdateDTO.getFirstName() != null) {
+            user.setFirstName(userUpdateDTO.getFirstName());
+        }
+        if (userUpdateDTO.getLastName() != null) {
+            user.setLastName(userUpdateDTO.getLastName());
+        }
+        if (userUpdateDTO.getMiddleName() != null) {
+            user.setMiddleName(userUpdateDTO.getMiddleName());
+        }
+        if (userUpdateDTO.getDateOfBirth() != null) {
+            LocalDate dateOfBirth = LocalDate.parse(userUpdateDTO.getDateOfBirth());
+            user.setDateOfBirth(dateOfBirth);
+        }
+        return userRepository.save(user);
     }
 }
