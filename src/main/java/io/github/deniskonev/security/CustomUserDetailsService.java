@@ -9,13 +9,16 @@ import java.util.Collections;
 
 public class CustomUserDetailsService implements UserDetailsService {
 
+    private static final String USER_NAME = "admin";
+    private static final String PASSWORD = "admin";
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        if ("admin".equals(username)) {
-            return new User("admin", "admin", Collections.emptyList());
+        if (USER_NAME.equals(username)) {
+            return new User(USER_NAME, PASSWORD, Collections.emptyList());
         } else {
-            throw new UsernameNotFoundException("User not found");
+            throw new UsernameNotFoundException("Пользователь не найден");
         }
     }
 }

@@ -5,6 +5,7 @@ import io.github.deniskonev.model.User;
 import io.github.deniskonev.model.UserPhoto;
 import io.github.deniskonev.repository.UserPhotoRepository;
 import io.github.deniskonev.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +36,7 @@ public class UserPhotoService {
                 return userPhotoRepository.save(userPhoto);
             }
         } else {
-            throw new RuntimeException("User not found");
+            throw new EntityNotFoundException("Пользователь не найден");
         }
     }
 
@@ -51,7 +52,7 @@ public class UserPhotoService {
 
     public void deletePhotoById(Long id) {
         UserPhoto userPhoto = userPhotoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Photo not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Фото не найдено"));
         User user = userPhoto.getUser();
         if (user != null) {
             user.setUserPhoto(null);

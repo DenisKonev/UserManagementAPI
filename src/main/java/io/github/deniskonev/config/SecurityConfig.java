@@ -29,6 +29,7 @@ public class SecurityConfig {
         return new CustomUserDetailsService();
     }
 
+    //TODO Для прода отключить, так как несекьюрно
     @Bean
     public PasswordEncoder passwordEncoder() {
         return NoOpPasswordEncoder.getInstance();

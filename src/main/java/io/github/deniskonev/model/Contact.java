@@ -20,13 +20,14 @@ public class Contact {
     @JsonBackReference
     private User user;
 
-    @Column(nullable = false, unique = true)
     @NotNull
     @Email
+    @Size(max = 100)
+    @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
     @NotNull
     @Size(min = 5, max = 20)
+    @Column(nullable = false)
     private String phoneNumber;
 }

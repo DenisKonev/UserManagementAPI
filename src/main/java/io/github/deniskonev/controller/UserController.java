@@ -1,6 +1,7 @@
 package io.github.deniskonev.controller;
 
-import io.github.deniskonev.dto.UserDTO;
+import io.github.deniskonev.dto.UserRequestDTO;
+import io.github.deniskonev.dto.UserResponseDTO;
 import io.github.deniskonev.model.User;
 import io.github.deniskonev.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,53 +25,54 @@ public class UserController {
     private UserService userService;
 
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
+    public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
         List<User> users = userService.getAllUsers();
-        return ResponseEntity.ok(users);
+        List<UserResponseDTO> userDTOs = users.stream()
+                .map(userService::convertToResponseDTO)
+                .toList();
+        return ResponseEntity.ok(userDTOs);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Long id) {
         Optional<User> userOptional = userService.getUserById(id);
-        return userOptional.map(ResponseEntity::ok)
+        return userOptional.map(user -> ResponseEntity.ok(userService.convertToResponseDTO(user)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user) {
+    public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody UserRequestDTO userDTO) {
+        User user = userService.convertToEntity(userDTO);
         User savedUser = userService.saveUser(user);
-        return ResponseEntity.ok(savedUser);
+        UserResponseDTO responseDTO = userService.convertToResponseDTO(savedUser);
+        return ResponseEntity.ok(responseDTO);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userDetails) {
+    public ResponseEntity<UserResponseDTO> updateUser(@PathVariable Long id, @Valid @RequestBody UserRequestDTO userDTO) {
         Optional<User> userOptional = userService.getUserById(id);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            user.setFirstName(userDetails.getFirstName());
-            user.setLastName(userDetails.getLastName());
-            user.setMiddleName(userDetails.getMiddleName());
-            user.setDateOfBirth(userDetails.getDateOfBirth());
-
+            userService.updateUserFromDTO(user, userDTO);
             User updatedUser = userService.saveUser(user);
-            return ResponseEntity.ok(updatedUser);
+            UserResponseDTO responseDTO = userService.convertToResponseDTO(updatedUser);
+            return ResponseEntity.ok(responseDTO);
         } else {
             return ResponseEntity.notFound().build();
         }
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<User> updateUserPartially(@PathVariable Long id, @Valid @RequestBody UserDTO userDTO) {
-        try {
-            Optional<User> userOptional = userService.getUserById(id);
-            if (userOptional.isPresent()) {
-                User updatedUser = userService.updateUserPartially(userOptional.get(), userDTO);
-                return ResponseEntity.ok(updatedUser);
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+    public ResponseEntity<UserResponseDTO> updateUserPartially(@PathVariable Long id, @RequestBody UserRequestDTO userDTO) {
+        Optional<User> userOptional = userService.getUserById(id);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            userService.updateUserPartiallyFromDTO(user, userDTO);
+            User updatedUser = userService.saveUser(user);
+            UserResponseDTO responseDTO = userService.convertToResponseDTO(updatedUser);
+            return ResponseEntity.ok(responseDTO);
+        } else {
+            return ResponseEntity.notFound().build();
         }
     }
 

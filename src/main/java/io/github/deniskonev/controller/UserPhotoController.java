@@ -13,6 +13,8 @@ import java.util.Optional;
 
 import static io.github.deniskonev.config.ApiConstants.*;
 
+//TODO Пофиксить хранение фото в бинарном виде. Контроллер работает, но при попытке сохранить фото в базу с типом данных BYTEA выбрасывается
+// исключение "org.postgresql.util.PSQLException: ERROR: column "photo" is of type bytea but expression is of type bigint". В качестве фикса изменен тип данных на OID.
 @RestController
 @RequestMapping(BASE_API + PHOTOS)
 @Tag(name = "User Photo Controller", description = "CRUD операции для фотографий пользователей")
