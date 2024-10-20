@@ -5,13 +5,14 @@ import io.github.deniskonev.dto.UserResponseDTO;
 import io.github.deniskonev.model.User;
 import io.github.deniskonev.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,7 +21,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-//TODO Пофиксить и оптимизировать тесты
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
@@ -42,31 +42,36 @@ class UserServiceTest {
     }
 
     @Test
+    @DisplayName("Get all users")
     void testGetAllUsers() {
-        when(userRepository.findAll()).thenReturn(Arrays.asList(userEntity));
+        when(userRepository.findAll()).thenReturn(Collections.singletonList(userEntity));
 
         List<UserResponseDTO> result = userService.getAllUsers();
 
-        assertThat(result).isNotNull();
-        assertThat(result).hasSize(1);
-        assertThat(result.get(0)).isEqualToComparingFieldByField(userResponseDTO);
+        assertThat(result).isNotNull()
+                .hasSize(1);
+        assertThat(result.getFirst()).usingRecursiveComparison()
+                .isEqualTo(userResponseDTO);
 
         verify(userRepository, times(1)).findAll();
     }
 
     @Test
+    @DisplayName("Get user by id: Success")
     void testGetUserById_Found() {
         when(userRepository.findById(USER_ID)).thenReturn(Optional.of(userEntity));
 
         Optional<UserResponseDTO> result = userService.getUserById(USER_ID);
 
         assertThat(result).isPresent();
-        assertThat(result.get()).isEqualToComparingFieldByField(userResponseDTO);
+        assertThat(result.get()).usingRecursiveComparison()
+                .isEqualTo(userResponseDTO);
 
         verify(userRepository, times(1)).findById(USER_ID);
     }
 
     @Test
+    @DisplayName("Get user by id: Not found")
     void testGetUserById_NotFound() {
         when(userRepository.findById(USER_ID)).thenReturn(Optional.empty());
 
@@ -78,6 +83,7 @@ class UserServiceTest {
     }
 
     @Test
+    @DisplayName("Create user: Success")
     void testCreateUser() {
         User savedUser = createUser();
         savedUser.setId(USER_ID);
@@ -85,27 +91,38 @@ class UserServiceTest {
 
         UserResponseDTO result = userService.createUser(userRequestDTO);
 
-        assertThat(result).isNotNull();
-        assertThat(result).isEqualToComparingFieldByField(userResponseDTO);
+        assertThat(result).isNotNull()
+                .usingRecursiveComparison()
+                .isEqualTo(userResponseDTO);
 
         verify(userRepository, times(1)).save(any(User.class));
     }
 
     @Test
+    @DisplayName("Update user: Success")
     void testUpdateUser_Found() {
         when(userRepository.findById(USER_ID)).thenReturn(Optional.of(userEntity));
-        when(userRepository.save(any(User.class))).thenReturn(userEntity);
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
+            User userToSave = invocation.getArgument(0);
+            userToSave.setUpdatedAt(FIXED_TIME);
+            return userToSave;
+        });
+
+        UserResponseDTO expectedDTO = createUserResponseDTO();
+        expectedDTO.setUpdatedAt(FIXED_TIME);
 
         Optional<UserResponseDTO> result = userService.updateUser(USER_ID, userRequestDTO);
 
         assertThat(result).isPresent();
-        assertThat(result.get()).isEqualToComparingFieldByField(userResponseDTO);
+        assertThat(result.get()).usingRecursiveComparison()
+                .isEqualTo(expectedDTO);
 
         verify(userRepository, times(1)).findById(USER_ID);
         verify(userRepository, times(1)).save(userEntity);
     }
 
     @Test
+    @DisplayName("Update user: Not found")
     void testUpdateUser_NotFound() {
         when(userRepository.findById(USER_ID)).thenReturn(Optional.empty());
 
@@ -118,6 +135,7 @@ class UserServiceTest {
     }
 
     @Test
+    @DisplayName("Delete user: Success")
     void testDeleteUser_Found() {
         when(userRepository.existsById(USER_ID)).thenReturn(true);
         doNothing().when(userRepository).deleteById(USER_ID);
@@ -131,6 +149,7 @@ class UserServiceTest {
     }
 
     @Test
+    @DisplayName("Delete user: Not found")
     void testDeleteUser_NotFound() {
         when(userRepository.existsById(USER_ID)).thenReturn(false);
 

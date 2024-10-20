@@ -3,6 +3,8 @@ package io.github.deniskonev.controller;
 import io.github.deniskonev.dto.UserRequestDTO;
 import io.github.deniskonev.dto.UserResponseDTO;
 import io.github.deniskonev.service.UserService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,9 +35,22 @@ class UserControllerTest {
     @MockBean
     private UserService userService;
 
+    private UserRequestDTO invalidDTO;
+    private UserResponseDTO responseDTO;
+    private UserResponseDTO updatedResponseDTO;
+
+    @BeforeEach
+    void setUp() {
+        responseDTO = createUserResponseDTO();
+        invalidDTO = new UserRequestDTO();
+        updatedResponseDTO = createUpdatedUserResponseDTO();
+    }
+
     @Test
+    @DisplayName("Get all users")
     void testGetAllUsers() throws Exception {
         Mockito.when(userService.getAllUsers()).thenReturn(Collections.singletonList(createUserResponseDTO()));
+
         mockMvc.perform(get(BASE_API + USERS)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -45,8 +60,10 @@ class UserControllerTest {
     }
 
     @Test
-    void testGetUserById_Success() throws Exception {
+    @DisplayName("Get user by id: Success")
+    void testGetUserById_Found() throws Exception {
         Mockito.when(userService.getUserById(USER_ID)).thenReturn(Optional.of(createUserResponseDTO()));
+
         mockMvc.perform(get(BASE_API + USERS + "/" + USER_ID)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -56,17 +73,20 @@ class UserControllerTest {
     }
 
     @Test
+    @DisplayName("Get user by id: Not found")
     void testGetUserById_NotFound() throws Exception {
         Mockito.when(userService.getUserById(USER_ID)).thenReturn(Optional.empty());
+
         mockMvc.perform(get(BASE_API + USERS + "/" + USER_ID)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
 
     @Test
+    @DisplayName("Create user: Success")
     void testCreateUser_Success() throws Exception {
-        UserResponseDTO responseDTO = createUserResponseDTO();
         Mockito.when(userService.createUser(any(UserRequestDTO.class))).thenReturn(responseDTO);
+
         mockMvc.perform(post(BASE_API + USERS)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(createUserRequestDTO())))
@@ -77,8 +97,8 @@ class UserControllerTest {
     }
 
     @Test
+    @DisplayName("Create user: Validation error")
     void testCreateUser_ValidationError() throws Exception {
-        UserRequestDTO invalidDTO = new UserRequestDTO(); // Все поля null
         mockMvc.perform(post(BASE_API + USERS)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(invalidDTO)))
@@ -86,9 +106,10 @@ class UserControllerTest {
     }
 
     @Test
+    @DisplayName("Update user: Success")
     void testUpdateUser_Success() throws Exception {
-        UserResponseDTO responseDTO = createUpdatedUserResponseDTO();
-        Mockito.when(userService.updateUser(any(Long.class), any(UserRequestDTO.class))).thenReturn(Optional.of(responseDTO));
+        Mockito.when(userService.updateUser(any(Long.class), any(UserRequestDTO.class))).thenReturn(Optional.of(updatedResponseDTO));
+
         mockMvc.perform(put(BASE_API + USERS + "/" + USER_ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(createUserRequestDTO())))
@@ -99,8 +120,10 @@ class UserControllerTest {
     }
 
     @Test
+    @DisplayName("Update user: Not found")
     void testUpdateUser_NotFound() throws Exception {
         Mockito.when(userService.updateUser(any(Long.class), any(UserRequestDTO.class))).thenReturn(Optional.empty());
+
         mockMvc.perform(put(BASE_API + USERS + "/" + USER_ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(createUserRequestDTO())))
@@ -108,16 +131,20 @@ class UserControllerTest {
     }
 
     @Test
+    @DisplayName("Delete user: Success")
     void testDeleteUser_Success() throws Exception {
         Mockito.when(userService.deleteUser(USER_ID)).thenReturn(true);
+
         mockMvc.perform(delete(BASE_API + USERS + "/" + USER_ID)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
     }
 
     @Test
+    @DisplayName("Delete user: Not found")
     void testDeleteUser_NotFound() throws Exception {
         Mockito.when(userService.deleteUser(USER_ID)).thenReturn(false);
+
         mockMvc.perform(delete(BASE_API + USERS + "/" + USER_ID)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());

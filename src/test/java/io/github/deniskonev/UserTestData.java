@@ -18,12 +18,16 @@ public class UserTestData {
     public static final String NEW_EMAIL = "ivan.new@example.com";
     public static final LocalDateTime CREATED_AT = LocalDateTime.now().minusDays(1);
     public static final LocalDateTime UPDATED_AT = LocalDateTime.now();
+    public static final LocalDateTime FIXED_TIME = LocalDateTime.of(2024, 10, 20, 20, 34, 49, 724200700);
 
     public static User createUser() {
         User user = new User();
+        user.setId(USER_ID);
         user.setUsername(USERNAME);
         user.setEmail(EMAIL);
         user.setPassword(PASSWORD);
+        user.setCreatedAt(CREATED_AT);
+        user.setUpdatedAt(UPDATED_AT);
         return user;
     }
 
