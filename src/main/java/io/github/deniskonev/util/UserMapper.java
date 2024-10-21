@@ -11,7 +11,7 @@ public class UserMapper {
     /**
      * Преобразование UserRequestDTO в сущность User.
      *
-     * @param dto данные из запроса
+     * @param userDTO данные из запроса
      * @return сущность User
      */
     public static User toEntity(UserRequestDto userDTO) {

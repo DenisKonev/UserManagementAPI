@@ -2,9 +2,11 @@ package io.github.deniskonev.service;
 
 import io.github.deniskonev.dto.UserRequestDto;
 import io.github.deniskonev.dto.UserResponseDto;
+import io.github.deniskonev.dto.UserRoleRequestDto;
 import io.github.deniskonev.dto.UserRoleResponseDto;
 import io.github.deniskonev.exception.ExternalServiceException;
 import io.github.deniskonev.model.User;
+import io.github.deniskonev.model.UserRole;
 import io.github.deniskonev.repository.UserRepository;
 import io.github.deniskonev.repository.UserRoleRepository;
 import io.github.deniskonev.util.UserMapper;
@@ -15,6 +17,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,7 +50,9 @@ public class UserService {
         List<UserResponseDto> userDTOs = users.stream()
                 .map(UserMapper::toDTO)
                 .toList();
-        mapUserRoles(userDTOs, mapUserRequestDto(roleRepository.findAll()), rolesDto);
+        mapUserRoles(userDTOs,
+                mapUserRequestDto(roleRepository.findAll()),
+                rolesDto);
         log.debug("Найдено {} пользователей", userDTOs.size());
         return userDTOs;
     }
@@ -65,6 +70,15 @@ public class UserService {
                 .map(UserMapper::toDTO);
         if (userDTOOptional.isPresent()) {
             log.debug("Пользователь с id {} найден", id);
+            List<UserRoleResponseDto> rolesDto = getAllRoles();
+            List<UserRole> userRoles = roleRepository.findByUserId(id);
+            List<UserRoleRequestDto> userRolesDto = mapUserRequestDto(userRoles);
+            mapUserRoles(
+                    Collections.singletonList(userDTOOptional.get()),
+                    userRolesDto,
+                    rolesDto
+            );
+            log.debug("Добавлены роли для пользователя с id {}", id);
         } else {
             log.debug("Пользователь с id {} не найден", id);
         }
