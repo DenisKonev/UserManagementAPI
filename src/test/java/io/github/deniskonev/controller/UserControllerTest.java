@@ -41,15 +41,15 @@ class UserControllerTest {
 
     @BeforeEach
     void setUp() {
-        responseDTO = createUserResponseDTO();
+        responseDTO = createUserResponseDto();
         invalidDTO = new UserRequestDto();
-        updatedResponseDTO = createUpdatedUserResponseDTO();
+        updatedResponseDTO = createUpdatedUserResponseDto();
     }
 
     @Test
     @DisplayName("Get all users")
     void testGetAllUsers() throws Exception {
-        Mockito.when(userService.getAllUsers()).thenReturn(Collections.singletonList(createUserResponseDTO()));
+        Mockito.when(userService.getAllUsers()).thenReturn(Collections.singletonList(createUserResponseDto()));
 
         mockMvc.perform(get(BASE_API + USERS)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -62,7 +62,7 @@ class UserControllerTest {
     @Test
     @DisplayName("Get user by id: Success")
     void testGetUserById_Found() throws Exception {
-        Mockito.when(userService.getUserById(USER_ID)).thenReturn(Optional.of(createUserResponseDTO()));
+        Mockito.when(userService.getUserById(USER_ID)).thenReturn(Optional.of(createUserResponseDto()));
 
         mockMvc.perform(get(BASE_API + USERS + "/" + USER_ID)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -89,7 +89,7 @@ class UserControllerTest {
 
         mockMvc.perform(post(BASE_API + USERS)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(createUserRequestDTO())))
+                        .content(asJsonString(createUserRequestDto())))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(USER_ID))
                 .andExpect(jsonPath("$.username").value(USERNAME))
@@ -112,7 +112,7 @@ class UserControllerTest {
 
         mockMvc.perform(put(BASE_API + USERS + "/" + USER_ID)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(createUserRequestDTO())))
+                        .content(asJsonString(createUserRequestDto())))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(USER_ID))
                 .andExpect(jsonPath("$.username").value(USERNAME))
@@ -126,7 +126,7 @@ class UserControllerTest {
 
         mockMvc.perform(put(BASE_API + USERS + "/" + USER_ID)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(createUserRequestDTO())))
+                        .content(asJsonString(createUserRequestDto())))
                 .andExpect(status().isNotFound());
     }
 

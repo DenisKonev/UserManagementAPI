@@ -2,8 +2,10 @@ package io.github.deniskonev.service;
 
 import io.github.deniskonev.dto.UserRequestDto;
 import io.github.deniskonev.dto.UserResponseDto;
+import io.github.deniskonev.dto.UserRoleResponseDto;
 import io.github.deniskonev.model.User;
 import io.github.deniskonev.repository.UserRepository;
+import io.github.deniskonev.repository.UserRoleRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,39 +30,53 @@ class UserServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private UserRoleRepository roleRepository;
+
+    @Mock
+    private RestTemplate restTemplate;
+
     @InjectMocks
     private UserService userService;
 
     private User userEntity;
+    private User userEntityWithNullRoles;
     private UserResponseDto userResponseDTO;
     private UserRequestDto userRequestDTO;
+    private UserRoleResponseDto userRoleResponseDto;
 
     @BeforeEach
     void setUp() {
         userEntity = createUser();
-        userResponseDTO = createUserResponseDTO();
-        userRequestDTO = createUserRequestDTO();
+        userEntityWithNullRoles = createUserWithNullRoles();
+        userResponseDTO = createUserResponseDto();
+        userRequestDTO = createUserRequestDto();
+        userRoleResponseDto = createRoleResponseDTO();
     }
 
     @Test
     @DisplayName("Get all users")
     void testGetAllUsers() {
-        when(userRepository.findAll()).thenReturn(Collections.singletonList(userEntity));
+        when(userRepository.findAll()).thenReturn(Collections.singletonList(userEntityWithNullRoles));
+        when(restTemplate.getForObject(anyString(), eq(UserRoleResponseDto[].class)))
+                .thenReturn(new UserRoleResponseDto[]{userRoleResponseDto});
+        when(roleRepository.findAll()).thenReturn(Collections.emptyList());
 
         List<UserResponseDto> result = userService.getAllUsers();
 
         assertThat(result).isNotNull()
                 .hasSize(1);
-        assertThat(result.getFirst()).usingRecursiveComparison()
+        assertThat(result.get(0)).usingRecursiveComparison()
                 .isEqualTo(userResponseDTO);
 
         verify(userRepository, times(1)).findAll();
+        verify(restTemplate, times(1)).getForObject(anyString(), eq(UserRoleResponseDto[].class));
     }
 
     @Test
     @DisplayName("Get user by id: Success")
     void testGetUserById_Found() {
-        when(userRepository.findById(USER_ID)).thenReturn(Optional.of(userEntity));
+        when(userRepository.findById(USER_ID)).thenReturn(Optional.of(userEntityWithNullRoles));
 
         Optional<UserResponseDto> result = userService.getUserById(USER_ID);
 
@@ -108,7 +125,7 @@ class UserServiceTest {
             return userToSave;
         });
 
-        UserResponseDto expectedDTO = createUserResponseDTO();
+        UserResponseDto expectedDTO = createUserResponseDto();
         expectedDTO.setUpdatedAt(FIXED_TIME);
 
         Optional<UserResponseDto> result = userService.updateUser(USER_ID, userRequestDTO);

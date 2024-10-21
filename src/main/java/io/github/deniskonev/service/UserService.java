@@ -150,7 +150,7 @@ public class UserService {
         UserRoleResponseDto[] externalRolesArray = restTemplate.getForObject(EXTERNAL_ROLES_API, UserRoleResponseDto[].class);
 
         if (externalRolesArray == null) {
-            String errorMessage = "Результат запроса к RoleManagementApiA оказался null";
+            String errorMessage = "Результат запроса к RoleManagementApi оказался null";
             log.error(errorMessage);
             throw new ExternalServiceException(errorMessage);
         }
