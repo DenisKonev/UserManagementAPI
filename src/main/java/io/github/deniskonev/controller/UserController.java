@@ -1,7 +1,7 @@
 package io.github.deniskonev.controller;
 
-import io.github.deniskonev.dto.UserRequestDTO;
-import io.github.deniskonev.dto.UserResponseDTO;
+import io.github.deniskonev.dto.UserRequestDto;
+import io.github.deniskonev.dto.UserResponseDto;
 import io.github.deniskonev.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -32,9 +32,9 @@ public class UserController {
      * @return список UserResponseDTO
      */
     @GetMapping
-    public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
+    public ResponseEntity<List<UserResponseDto>> getAllUsers() {
         log.debug("Входящий запрос: GET /{}", BASE_API + USERS);
-        List<UserResponseDTO> userDTOs = userService.getAllUsers();
+        List<UserResponseDto> userDTOs = userService.getAllUsers();
         log.debug("Возвращено {} пользователей", userDTOs.size());
         return ResponseEntity.ok(userDTOs);
     }
@@ -46,9 +46,9 @@ public class UserController {
      * @return UserResponseDTO или статус 404, если пользователь не найден
      */
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Long id) {
+    public ResponseEntity<UserResponseDto> getUserById(@PathVariable Long id) {
         log.debug("Входящий запрос: GET /{}/{}", BASE_API + USERS, id);
-        Optional<UserResponseDTO> userDTOOptional = userService.getUserById(id);
+        Optional<UserResponseDto> userDTOOptional = userService.getUserById(id);
         if (userDTOOptional.isPresent()) {
             log.debug("Пользователь с id {} найден", id);
             return ResponseEntity.ok(userDTOOptional.get());
@@ -65,9 +65,9 @@ public class UserController {
      * @return UserResponseDTO созданного пользователя
      */
     @PostMapping
-    public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody UserRequestDTO userDTO) {
+    public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody UserRequestDto userDTO) {
         log.debug("Входящий запрос: POST /{} с данными {}", BASE_API + USERS, userDTO);
-        UserResponseDTO responseDTO = userService.createUser(userDTO);
+        UserResponseDto responseDTO = userService.createUser(userDTO);
         log.debug("Пользователь создан с id {}", responseDTO.getId());
         return ResponseEntity.ok(responseDTO);
     }
@@ -80,9 +80,9 @@ public class UserController {
      * @return UserResponseDTO обновленного пользователя или статус 404, если пользователь не найден
      */
     @PutMapping("/{id}")
-    public ResponseEntity<UserResponseDTO> updateUser(@PathVariable Long id, @Valid @RequestBody UserRequestDTO userDTO) {
+    public ResponseEntity<UserResponseDto> updateUser(@PathVariable Long id, @Valid @RequestBody UserRequestDto userDTO) {
         log.debug("Входящий запрос: PUT /{}/{} с данными {}", BASE_API + USERS, id, userDTO);
-        Optional<UserResponseDTO> updatedUserDTO = userService.updateUser(id, userDTO);
+        Optional<UserResponseDto> updatedUserDTO = userService.updateUser(id, userDTO);
         if (updatedUserDTO.isPresent()) {
             log.debug("Пользователь с id {} успешно обновлен", id);
             return ResponseEntity.ok(updatedUserDTO.get());

@@ -1,7 +1,7 @@
 package io.github.deniskonev.controller;
 
-import io.github.deniskonev.dto.UserRequestDTO;
-import io.github.deniskonev.dto.UserResponseDTO;
+import io.github.deniskonev.dto.UserRequestDto;
+import io.github.deniskonev.dto.UserResponseDto;
 import io.github.deniskonev.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -35,14 +35,14 @@ class UserControllerTest {
     @MockBean
     private UserService userService;
 
-    private UserRequestDTO invalidDTO;
-    private UserResponseDTO responseDTO;
-    private UserResponseDTO updatedResponseDTO;
+    private UserRequestDto invalidDTO;
+    private UserResponseDto responseDTO;
+    private UserResponseDto updatedResponseDTO;
 
     @BeforeEach
     void setUp() {
         responseDTO = createUserResponseDTO();
-        invalidDTO = new UserRequestDTO();
+        invalidDTO = new UserRequestDto();
         updatedResponseDTO = createUpdatedUserResponseDTO();
     }
 
@@ -85,7 +85,7 @@ class UserControllerTest {
     @Test
     @DisplayName("Create user: Success")
     void testCreateUser_Success() throws Exception {
-        Mockito.when(userService.createUser(any(UserRequestDTO.class))).thenReturn(responseDTO);
+        Mockito.when(userService.createUser(any(UserRequestDto.class))).thenReturn(responseDTO);
 
         mockMvc.perform(post(BASE_API + USERS)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -108,7 +108,7 @@ class UserControllerTest {
     @Test
     @DisplayName("Update user: Success")
     void testUpdateUser_Success() throws Exception {
-        Mockito.when(userService.updateUser(any(Long.class), any(UserRequestDTO.class))).thenReturn(Optional.of(updatedResponseDTO));
+        Mockito.when(userService.updateUser(any(Long.class), any(UserRequestDto.class))).thenReturn(Optional.of(updatedResponseDTO));
 
         mockMvc.perform(put(BASE_API + USERS + "/" + USER_ID)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -122,7 +122,7 @@ class UserControllerTest {
     @Test
     @DisplayName("Update user: Not found")
     void testUpdateUser_NotFound() throws Exception {
-        Mockito.when(userService.updateUser(any(Long.class), any(UserRequestDTO.class))).thenReturn(Optional.empty());
+        Mockito.when(userService.updateUser(any(Long.class), any(UserRequestDto.class))).thenReturn(Optional.empty());
 
         mockMvc.perform(put(BASE_API + USERS + "/" + USER_ID)
                         .contentType(MediaType.APPLICATION_JSON)

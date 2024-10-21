@@ -1,8 +1,8 @@
 package io.github.deniskonev;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.deniskonev.dto.UserRequestDTO;
-import io.github.deniskonev.dto.UserResponseDTO;
+import io.github.deniskonev.dto.UserRequestDto;
+import io.github.deniskonev.dto.UserResponseDto;
 import io.github.deniskonev.model.User;
 import lombok.experimental.UtilityClass;
 
@@ -31,16 +31,16 @@ public class UserTestData {
         return user;
     }
 
-    public static UserRequestDTO createUserRequestDTO() {
-        UserRequestDTO dto = new UserRequestDTO();
+    public static UserRequestDto createUserRequestDTO() {
+        UserRequestDto dto = new UserRequestDto();
         dto.setUsername(USERNAME);
         dto.setEmail(EMAIL);
         dto.setPassword(PASSWORD);
         return dto;
     }
 
-    public static UserResponseDTO createUserResponseDTO() {
-        UserResponseDTO dto = new UserResponseDTO();
+    public static UserResponseDto createUserResponseDTO() {
+        UserResponseDto dto = new UserResponseDto();
         dto.setId(USER_ID);
         dto.setUsername(USERNAME);
         dto.setEmail(EMAIL);
@@ -49,8 +49,8 @@ public class UserTestData {
         return dto;
     }
 
-    public static UserResponseDTO createUpdatedUserResponseDTO() {
-        UserResponseDTO dto = new UserResponseDTO();
+    public static UserResponseDto createUpdatedUserResponseDTO() {
+        UserResponseDto dto = new UserResponseDto();
         dto.setId(USER_ID);
         dto.setUsername(USERNAME);
         dto.setEmail(NEW_EMAIL);

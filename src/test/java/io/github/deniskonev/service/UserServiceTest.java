@@ -1,7 +1,7 @@
 package io.github.deniskonev.service;
 
-import io.github.deniskonev.dto.UserRequestDTO;
-import io.github.deniskonev.dto.UserResponseDTO;
+import io.github.deniskonev.dto.UserRequestDto;
+import io.github.deniskonev.dto.UserResponseDto;
 import io.github.deniskonev.model.User;
 import io.github.deniskonev.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,8 +31,8 @@ class UserServiceTest {
     private UserService userService;
 
     private User userEntity;
-    private UserResponseDTO userResponseDTO;
-    private UserRequestDTO userRequestDTO;
+    private UserResponseDto userResponseDTO;
+    private UserRequestDto userRequestDTO;
 
     @BeforeEach
     void setUp() {
@@ -46,7 +46,7 @@ class UserServiceTest {
     void testGetAllUsers() {
         when(userRepository.findAll()).thenReturn(Collections.singletonList(userEntity));
 
-        List<UserResponseDTO> result = userService.getAllUsers();
+        List<UserResponseDto> result = userService.getAllUsers();
 
         assertThat(result).isNotNull()
                 .hasSize(1);
@@ -61,7 +61,7 @@ class UserServiceTest {
     void testGetUserById_Found() {
         when(userRepository.findById(USER_ID)).thenReturn(Optional.of(userEntity));
 
-        Optional<UserResponseDTO> result = userService.getUserById(USER_ID);
+        Optional<UserResponseDto> result = userService.getUserById(USER_ID);
 
         assertThat(result).isPresent();
         assertThat(result.get()).usingRecursiveComparison()
@@ -75,7 +75,7 @@ class UserServiceTest {
     void testGetUserById_NotFound() {
         when(userRepository.findById(USER_ID)).thenReturn(Optional.empty());
 
-        Optional<UserResponseDTO> result = userService.getUserById(USER_ID);
+        Optional<UserResponseDto> result = userService.getUserById(USER_ID);
 
         assertThat(result).isNotPresent();
 
@@ -89,7 +89,7 @@ class UserServiceTest {
         savedUser.setId(USER_ID);
         when(userRepository.save(any(User.class))).thenReturn(savedUser);
 
-        UserResponseDTO result = userService.createUser(userRequestDTO);
+        UserResponseDto result = userService.createUser(userRequestDTO);
 
         assertThat(result).isNotNull()
                 .usingRecursiveComparison()
@@ -108,10 +108,10 @@ class UserServiceTest {
             return userToSave;
         });
 
-        UserResponseDTO expectedDTO = createUserResponseDTO();
+        UserResponseDto expectedDTO = createUserResponseDTO();
         expectedDTO.setUpdatedAt(FIXED_TIME);
 
-        Optional<UserResponseDTO> result = userService.updateUser(USER_ID, userRequestDTO);
+        Optional<UserResponseDto> result = userService.updateUser(USER_ID, userRequestDTO);
 
         assertThat(result).isPresent();
         assertThat(result.get()).usingRecursiveComparison()
@@ -126,7 +126,7 @@ class UserServiceTest {
     void testUpdateUser_NotFound() {
         when(userRepository.findById(USER_ID)).thenReturn(Optional.empty());
 
-        Optional<UserResponseDTO> result = userService.updateUser(USER_ID, userRequestDTO);
+        Optional<UserResponseDto> result = userService.updateUser(USER_ID, userRequestDTO);
 
         assertThat(result).isNotPresent();
 
